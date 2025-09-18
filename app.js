@@ -116,12 +116,22 @@ function render(d){
     gameStatus.textContent = "—";
   }
 
+  // tables — per-player step numbering
   p1HistoryTbody.innerHTML = "";
   p2HistoryTbody.innerHTML = "";
+  let p1Step = 0, p2Step = 0;
   for(const h of history){
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${h.step}</td><td class="reveal">${h.guess}</td><td>${h.bulls}</td>`;
-    (h.by==="p1" ? p1HistoryTbody : p2HistoryTbody).appendChild(tr);
+    if(h.by === "p1"){
+      p1Step++;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${p1Step}</td><td class="reveal">${h.guess}</td><td>${h.bulls}</td>`;
+      p1HistoryTbody.appendChild(tr);
+    }else if(h.by === "p2"){
+      p2Step++;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td>${p2Step}</td><td class="reveal">${h.guess}</td><td>${h.bulls}</td>`;
+      p2HistoryTbody.appendChild(tr);
+    }
   }
 
   winnerArea.innerHTML = "";
