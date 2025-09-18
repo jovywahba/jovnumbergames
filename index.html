@@ -1,0 +1,119 @@
+﻿<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guess-3 — Online Two Players</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Guess-3 — Online Two Players</h1>
+    <p class="sub">
+      Create or join a Room ID. Each player sets a secret 3-digit number. Each round both players submit one guess.
+      “Bulls” = correct digit & correct position. First to 3 bulls wins. If both hit 3 in the same round → Draw.
+    </p>
+
+    <section class="card" aria-labelledby="onlineTitle">
+      <h2 id="onlineTitle" style="margin:0 0 10px;">Online Room</h2>
+      <div class="row">
+        <label for="roomId">Room ID:</label>
+        <input id="roomId" type="text" maxlength="20" placeholder="e.g., jov-room-1" />
+        <label class="switch">
+          <input type="radio" name="role" id="roleP1" value="p1" checked />
+          <span>Join as Player 1</span>
+        </label>
+        <label class="switch">
+          <input type="radio" name="role" id="roleP2" value="p2" />
+          <span>Join as Player 2</span>
+        </label>
+        <button id="joinBtn">Create/Join Room</button>
+        <button id="leaveBtn" class="ghost" disabled>Leave</button>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <label class="switch">
+          <input id="allowRepeats" type="checkbox" />
+          <span>Allow repeated digits?</span>
+        </label>
+        <span class="muted">Only P1 can change this before the game starts.</span>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="flex-between">
+        <div>
+          <div class="muted">P1 secret:</div>
+          <div><span id="revealP1Val" class="reveal">•••</span></div>
+        </div>
+        <div class="row">
+          <label for="p1secret" class="sr">P1 secret</label>
+          <input id="p1secret" type="password" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" placeholder="e.g., 123" />
+          <button id="toggleP1" class="ghost" title="Show/Hide">👁</button>
+          <button id="p1ReadyBtn">P1 Ready</button>
+        </div>
+
+        <div>
+          <div class="muted">P2 secret:</div>
+          <div><span id="revealP2Val" class="reveal">•••</span></div>
+        </div>
+        <div class="row">
+          <label for="p2secret" class="sr">P2 secret</label>
+          <input id="p2secret" type="password" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" placeholder="e.g., 987" />
+          <button id="toggleP2" class="ghost" title="Show/Hide">👁</button>
+          <button id="p2ReadyBtn">P2 Ready</button>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:8px">
+        <button id="startBtn" class="ok" disabled>Start Game (P1)</button>
+        <button id="resetBtn" class="warn" disabled>Reset Room</button>
+      </div>
+
+      <div id="gameStatus" class="status" aria-live="polite"></div>
+    </section>
+
+    <div class="row" style="margin-top:12px">
+      <div class="pill">Round: <b><span id="roundNo">0</span></b></div>
+      <div class="pill">P1 tries: <b><span id="p1Tries">0</span></b></div>
+      <div class="pill">P2 tries: <b><span id="p2Tries">0</span></b></div>
+      <div class="pill">Room status: <b><span id="roomStatus">—</span></b></div>
+    </div>
+
+    <div class="grid grid-two">
+      <section class="card" aria-labelledby="p1Title">
+        <h2 id="p1Title" style="margin:0 0 10px;">Player 1 Board</h2>
+        <div class="row" style="margin-bottom:8px">
+          <label for="p1guess">P1 guess (vs P2 secret):</label>
+          <input id="p1guess" type="text" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" placeholder="e.g., 045" disabled>
+          <button id="p1Submit" disabled>Submit P1 Guess</button>
+        </div>
+        <table aria-label="Player 1 history">
+          <thead>
+            <tr><th>Round</th><th>P1 Guess</th><th>Bulls</th></tr>
+          </thead>
+          <tbody id="p1History"></tbody>
+        </table>
+      </section>
+
+      <section class="card" aria-labelledby="p2Title">
+        <h2 id="p2Title" style="margin:0 0 10px;">Player 2 Board</h2>
+        <div class="row" style="margin-bottom:8px">
+          <label for="p2guess">P2 guess (vs P1 secret):</label>
+          <input id="p2guess" type="text" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" placeholder="e.g., 760" disabled>
+          <button id="p2Submit" disabled>Submit P2 Guess</button>
+        </div>
+        <table aria-label="Player 2 history">
+          <thead>
+            <tr><th>Round</th><th>P2 Guess</th><th>Bulls</th></tr>
+          </thead>
+          <tbody id="p2History"></tbody>
+        </table>
+      </section>
+    </div>
+
+    <div id="winnerArea" aria-live="polite" style="margin-top:12px"></div>
+  </div>
+</body>
+</html>
