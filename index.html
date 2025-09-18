@@ -13,7 +13,7 @@
     <p class="sub">
       Share a Room ID (or the URL). First to join is Player 1, second is Player 2.
       Enter a 3-digit secret (leading zero allowed). A “bull” = correct digit in the correct position.
-      First to 3 bulls wins. If both hit 3 in the same round → Draw.
+      First to 3 bulls wins. If both hit 3 in the same step, it’s a draw.
     </p>
 
     <!-- Room / Connection -->
@@ -31,7 +31,7 @@
       <div class="row" style="margin-top:8px">
         <div class="pill">Your role: <b><span id="yourRole">—</span></b></div>
         <div class="pill">Room status: <b><span id="roomStatus">idle</span></b></div>
-        <div class="pill">Round: <b><span id="roundNo">0</span></b></div>
+        <div class="pill">Turn: <b><span id="turnNow">—</span></b></div>
       </div>
 
       <div class="row" style="margin-top:8px">
@@ -52,7 +52,7 @@
             <input id="p1secret" type="password" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" placeholder="e.g., 123" />
             <button id="toggleP1" class="ghost" title="Show/Hide">👁</button>
           </div>
-          <div class="muted">Server shows: <span id="revealP1Val" class="reveal">•••</span></div>
+          <p class="help">Only you can see what you type here. Player 2 cannot see your secret.</p>
         </div>
 
         <div class="card" style="flex:1">
@@ -62,7 +62,7 @@
             <input id="p2secret" type="password" inputmode="numeric" pattern="[0-9]{3}" maxlength="3" placeholder="e.g., 987" />
             <button id="toggleP2" class="ghost" title="Show/Hide">👁</button>
           </div>
-          <div class="muted">Server shows: <span id="revealP2Val" class="reveal">•••</span></div>
+          <p class="help">Only you can see what you type here. Player 1 cannot see your secret.</p>
         </div>
       </div>
 
@@ -89,7 +89,7 @@
         </div>
         <table aria-label="Player 1 history">
           <thead>
-            <tr><th>Round</th><th>P1 Guess</th><th>Bulls</th></tr>
+            <tr><th>Step</th><th>P1 Guess</th><th>Bulls</th></tr>
           </thead>
           <tbody id="p1History"></tbody>
         </table>
@@ -104,7 +104,7 @@
         </div>
         <table aria-label="Player 2 history">
           <thead>
-            <tr><th>Round</th><th>P2 Guess</th><th>Bulls</th></tr>
+            <tr><th>Step</th><th>P2 Guess</th><th>Bulls</th></tr>
           </thead>
           <tbody id="p2History"></tbody>
         </table>
