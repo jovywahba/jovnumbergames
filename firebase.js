@@ -1,8 +1,10 @@
-﻿import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
+// firebase.js — robust Firestore init for locked-down browsers
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js";
 import {
-  getFirestore,
+  initializeFirestore,
+  memoryLocalCache,
   doc, getDoc, setDoc, updateDoc, onSnapshot,
-  serverTimestamp, runTransaction
+  runTransaction, serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.2.1/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -15,8 +17,16 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+
+// Force a memory cache (no IndexedDB) and enable long-polling so it works behind proxies/strict modes.
+const db = initializeFirestore(app, {
+  localCache: memoryLocalCache(),
+  experimentalAutoDetectLongPolling: true,
+  useFetchStreams: false
+});
 
 export {
-  db, doc, getDoc, setDoc, updateDoc, onSnapshot, serverTimestamp, runTransaction
+  db,
+  doc, getDoc, setDoc, updateDoc, onSnapshot,
+  runTransaction, serverTimestamp
 };
