@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Guess — Create Room</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <script type="module">
+    import { auth, onAuthStateChanged, db, doc, setDoc, serverTimestamp } from "./firebase.js";
+    const $ = (id)=>document.getElementById(id);
+
+    onAuthStateChanged(auth, (u)=>{
+      if(!u){ location.href = "login.html?next="+encodeURIComponent(location.href); return; }
+      $("who").textContent = u.displayName || u.email || u.uid;
+      if(!$("room").value) $("room").value = "room-" + Math.random().toString(36).slice(2,8);
+    });
+
+    $("cancel").addEventListener("click", ()=> location.href="home.html");
+
+    $("create").addEventListener("click", async ()=>{
+      const u = auth.currentUser;
+      if(!u){ location.href = "login.html?next="+encodeURIComponent(location.href); return; }
+
+      const roomId = ($("room").value||"").trim().slice(0,24);
+      const codeLen = parseInt($("codeLen").value,10);
+      const turnTimeSec = parseInt($("turn").value,10);
+
+      if(!roomId){ showErr("Room ID is required."); return; }
+      if(!(codeLen>=2 && codeLen<=6)){ showErr("Code length must be 2–6."); return; }
+      if(!(turnTimeSec>=5 && turnTimeSec<=120)){ showErr("Turn time must be 5–120 seconds."); return; }
+
+      try{
+        const now = Date.now();
+        await setDoc(doc(db,"rooms",roomId),{
+          roomId,
+          createdAt: serverTimestamp(),
+          expiresAt: new Date(now + 20*60*1000),
+          status:"waiting",
+          codeLen,
+          turnTimeSec,
+          timeLeft: turnTimeSec,
+          createdById: u.uid,
+          p1Id: u.uid,
+          p1Name: u.displayName || "Player",
+          p2Id: null,
+          p2Name: "",
+          p1Secret:"", p2Secret:"",
+          p1Ready:false, p2Ready:false,
+          turn:null, history:[], winner:null,
+          countdown:null, tickDriverId:null
+        }, { merge:true });
+
+        showOk("Room created! Opening…");
+        setTimeout(()=> location.href=`index.html?room=${encodeURIComponent(roomId)}`, 350);
+      }catch(e){
+        showErr(e?.message || String(e));
+      }
+    });
+
+    function showErr(m){ const x=$("err"); x.textContent=m; x.style.display="block"; $("ok").style.display="none"; }
+    function showOk(m){ const x=$("ok"); x.textContent=m; x.style.display="block"; $("err").style.display="none"; }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Create Room</h1>
+
+    <div class="card" style="max-width:720px;margin:12px auto;">
+      <div class="row" style="justify-content:space-between">
+        <div class="pill">Hello, <b id="who">…</b></div>
+        <a class="pill" href="home.html" style="text-decoration:none">Back to Home</a>
+      </div>
+
+      <div class="sep"></div>
+
+      <div id="ok" class="winner ok" style="display:none;margin-bottom:8px"></div>
+      <div id="err" class="winner bad" style="display:none;margin-bottom:8px"></div>
+
+      <div class="row" style="width:100%">
+        <label for="room" style="min-width:140px">Room ID</label>
+        <input id="room" placeholder="room-xxxx" style="flex:1"/>
+      </div>
+      <p class="help">Letters / numbers / dashes are fine. Max 24 characters.</p>
+
+      <div class="row" style="width:100%">
+        <label for="codeLen" style="min-width:140px">Code length</label>
+        <select id="codeLen" style="flex:1">
+          <option value="2">2 digits</option>
+          <option value="3" selected>3 digits</option>
+          <option value="4">4 digits</option>
+          <option value="5">5 digits</option>
+          <option value="6">6 digits</option>
+        </select>
+      </div>
+
+      <div class="row" style="width:100%">
+        <label for="turn" style="min-width:140px">Time per turn</label>
+        <select id="turn" style="flex:1">
+          <option>10</option>
+          <option selected>20</option>
+          <option>30</option>
+          <option>45</option>
+          <option>60</option>
+          <option>90</option>
+          <option>120</option>
+        </select>
+      </div>
+
+      <div class="sep"></div>
+      <div class="row" style="justify-content:flex-end;gap:8px">
+        <button id="cancel" class="ghost">Cancel</button>
+        <button id="create" class="ok">Create</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

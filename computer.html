@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Guess-3 | لاعب ضد الكمبيوتر</title>
+  <style>
+    :root{
+      --bg:#0b1020; --card:#11182a; --muted:#a8b3c7; --text:#eaf0ff; --brand:#4aa3ff; --ok:#27ae60; --bad:#ff5252; --warn:#f1c40f;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% -10%, #12203a 0, var(--bg) 60%);
+      color:var(--text);
+      min-height:100dvh; display:flex; align-items:center; justify-content:center; padding:24px;
+    }
+    .container{max-width:980px; width:100%;}
+    h1{margin:0 0 8px; font-weight:800; letter-spacing:.2px}
+    .sub{color:var(--muted); margin:0 0 20px; font-size:14px}
+    .grid{display:grid; gap:16px; grid-template-columns: 1.2fr 1fr;}
+    @media (max-width:900px){ .grid{grid-template-columns:1fr} }
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)) , var(--card);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:var(--radius); padding:18px; box-shadow:0 8px 28px rgba(0,0,0,.25);
+    }
+    .row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+    label{font-size:14px; color:var(--muted)}
+    input[type="text"], input[type="password"]{
+      background:#0d1526; color:var(--text); border:1px solid rgba(255,255,255,.12);
+      padding:10px 12px; border-radius:12px; font-size:16px; width:140px; letter-spacing:2px; text-align:center;
+    }
+    input::placeholder{color:#91a0b8; opacity:.5}
+    button{
+      background:var(--brand); color:#00122a; border:0; padding:10px 14px; border-radius:12px;
+      font-weight:700; cursor:pointer; transition:transform .06s ease, opacity .2s;
+    }
+    button:disabled{opacity:.5; cursor:not-allowed}
+    button:active{transform:translateY(1px)}
+    .ghost{background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,.14)}
+    .ok{background:var(--ok); color:#000}
+    .bad{background:var(--bad)}
+    .warn{background:var(--warn); color:#000}
+    .switch{display:flex; align-items:center; gap:8px}
+    .switch input{accent-color:var(--brand)}
+    .status{
+      margin:10px 0 0; min-height:24px; font-weight:600;
+    }
+    .status .tag{display:inline-block; padding:4px 10px; border-radius:999px; font-size:13px; margin-inline-end:6px}
+    .tag-info{background:#183459; color:#bcd6ff}
+    .tag-ok{background:#113a27; color:#a1f3c3}
+    .tag-bad{background:#3a1317; color:#ffb9c0}
+    .muted{color:var(--muted)}
+    table{width:100%; border-collapse:collapse; margin-top:6px; font-size:14px}
+    th, td{padding:10px 8px; border-bottom:1px solid rgba(255,255,255,.06); text-align:center}
+    th{color:#cfe0ff; font-weight:700; position:sticky; top:0; background:var(--card)}
+    .reveal{font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; letter-spacing:2px}
+    .sep{height:1px; background:rgba(255,255,255,.06); margin:12px 0}
+    .help{font-size:13px; color:var(--muted); line-height:1.5}
+    .winner{font-size:18px; padding:8px 12px; border-radius:12px; display:inline-block; margin-top:6px}
+    .flex-between{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap}
+    .pill{border:1px solid rgba(255,255,255,.14); padding:6px 10px; border-radius:999px; color:#cfe0ff}
+    .sr{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Guess-3</h1>
+    <p class="sub">لعبة تخمين ٣ أرقام: كل جولة الكمبيوتر يخمّن، وبعدين أنت تكتب تخمينك. اللي يجيب ٣ أرقام صح في مكانها يكسب.</p>
+
+    <div class="grid">
+      <!-- إعدادات وبداية -->
+      <section class="card" aria-labelledby="startTitle">
+        <h2 id="startTitle" style="margin:0 0 10px;">ابدأ اللعبة</h2>
+
+        <div class="row" style="margin-bottom:10px">
+          <label for="secret">سِرّك (٣ أرقام):</label>
+          <input id="secret" type="password" inputmode="numeric" pattern="\\d{3}" maxlength="3" placeholder="مثال: 982" aria-describedby="secretHelp">
+          <button id="toggleSecret" class="ghost" title="إظهار/إخفاء">👁</button>
+        </div>
+        <div id="secretHelp" class="help">مسموح صفر في البداية. افتراضيًا <b>ممنوع تكرار الأرقام</b> (تقدر تغيّر ده تحت).</div>
+
+        <div class="row" style="margin-top:12px">
+          <label class="switch">
+            <input id="allowRepeats" type="checkbox" />
+            <span>السماح بتكرار الأرقام؟</span>
+          </label>
+          <button id="startBtn">ابدأ اللعبة</button>
+          <button id="newBtn" class="ghost" disabled>لعبة جديدة</button>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="flex-between">
+          <div>
+            <div class="muted">سرّ الكمبيوتر:</div>
+            <div><span id="revealComp" class="reveal">•••</span></div>
+          </div>
+          <div class="row">
+            <button id="revealBtn" class="warn" disabled>إظهار/إخفاء سر الكمبيوتر</button>
+          </div>
+        </div>
+
+        <div class="status" aria-live="polite" id="gameStatus"></div>
+      </section>
+
+      <!-- اللعب والتاريخ -->
+      <section class="card" aria-labelledby="playTitle">
+        <h2 id="playTitle" style="margin:0 0 10px;">منطقة اللعب</h2>
+
+        <div class="row" style="margin-bottom:8px">
+          <label for="guess">تخمينك (٣ أرقام):</label>
+          <input id="guess" type="text" inputmode="numeric" pattern="\\d{3}" maxlength="3" placeholder="مثال: 021" disabled aria-describedby="guessHelp">
+          <button id="submitGuess" disabled>إرسال التخمين</button>
+        </div>
+        <div id="guessHelp" class="help">هقيّم تخمينك فورًا. الكمبيوتر بيبدأ كل جولة بتخمينه، وبعدها دورك.</div>
+
+        <div class="sep"></div>
+
+        <div class="flex-between">
+          <div class="pill">الجولة الحالية: <b><span id="roundNo">0</span></b></div>
+          <div class="pill">محاولاتك: <b><span id="yourTries">0</span></b></div>
+          <div class="pill">محاولات الكمبيوتر: <b><span id="compTries">0</span></b></div>
+        </div>
+
+        <table aria-describedby="tableDesc">
+          <caption class="sr" id="tableDesc">سجل الجولات</caption>
+          <thead>
+            <tr>
+              <th>جولة</th>
+              <th>تخمين الكمبيوتر</th>
+              <th>صح في مكانه (للـكمبيوتر)</th>
+              <th>تخمينك</th>
+              <th>صح في مكانه (لك)</th>
+            </tr>
+          </thead>
+          <tbody id="history"></tbody>
+        </table>
+
+        <div id="winnerArea" aria-live="polite"></div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // ===== Utilities =====
+    const $ = (id)=>document.getElementById(id);
+    const byId = $;
+
+    function onlyDigits3(s){ return /^\d{3}$/.test(s); }
+
+    function hasUniqueDigits(s){
+      return new Set(s.split("")).size === s.length;
+    }
+
+    function bulls(a,b){ // count exact-position matches
+      let c=0; for(let i=0;i<3;i++) if(a[i]===b[i]) c++; return c;
+    }
+
+    function randomSecret(allowRepeats){
+      if(allowRepeats){
+        let s=""; for(let i=0;i<3;i++) s += Math.floor(Math.random()*10);
+        return s;
+      }else{
+        const digits = ['0','1','2','3','4','5','6','7','8','9'];
+        let pick=[], used=new Set();
+        while(pick.length<3){
+          const d = digits[Math.floor(Math.random()*10)];
+          if(!used.has(d)){ used.add(d); pick.push(d); }
+        }
+        return pick.join("");
+      }
+    }
+
+    function allCandidates(allowRepeats){
+      const out=[];
+      if(allowRepeats){
+        for(let a=0;a<10;a++)
+          for(let b=0;b<10;b++)
+            for(let c=0;c<10;c++)
+              out.push(""+a+b+c);
+      }else{
+        for(let a=0;a<10;a++)
+          for(let b=0;b<10;b++) if(b!==a)
+            for(let c=0;c<10;c++) if(c!==a && c!==b)
+              out.push(""+a+b+c);
+      }
+      return out;
+    }
+
+    // ===== State =====
+    let state = {
+      started:false,
+      allowRepeats:false,
+      yourSecret:"",
+      compSecret:"",
+      candidates:[],
+      round:0,
+      history:[], // {round, compGuess, compBulls, yourGuess, yourBulls}
+      reveal:false,
+      winner:null // "you" | "comp" | "draw"
+    };
+
+    // ===== DOM =====
+    const secretEl = $('secret');
+    const toggleSecretBtn = $('toggleSecret');
+    const allowRepeatsEl = $('allowRepeats');
+    const startBtn = $('startBtn');
+    const newBtn = $('newBtn');
+    const revealBtn = $('revealBtn');
+    const revealComp = $('revealComp');
+
+    const guessEl = $('guess');
+    const submitGuessBtn = $('submitGuess');
+
+    const roundNo = $('roundNo');
+    const yourTries = $('yourTries');
+    const compTries = $('compTries');
+    const historyTbody = $('history');
+    const winnerArea = $('winnerArea');
+    const gameStatus = $('gameStatus');
+
+    // ===== Rendering =====
+    function render(){
+      // header bits
+      roundNo.textContent = state.round;
+      yourTries.textContent = state.history.filter(r=>r.yourGuess!==undefined).length;
+      compTries.textContent = state.history.length;
+
+      // reveal secret
+      revealComp.textContent = (state.started && state.reveal) ? state.compSecret : '•••';
+
+      // buttons & inputs
+      secretEl.disabled = state.started;
+      toggleSecretBtn.disabled = state.started && state.winner!==null; // still can toggle before end
+      allowRepeatsEl.disabled = state.started;
+
+      startBtn.disabled = state.started;
+      newBtn.disabled = !state.started;
+
+      revealBtn.disabled = !state.started;
+
+      guessEl.disabled = !state.started || state.winner!==null;
+      submitGuessBtn.disabled = guessEl.disabled;
+
+      // status line
+      if(!state.started){
+        gameStatus.innerHTML = `<span class="tag tag-info">إرشاد</span> اكتب سرك واضغط "ابدأ اللعبة".`;
+      }else if(state.winner===null){
+        const last = state.history[state.history.length-1];
+        if(last){
+          gameStatus.innerHTML = `<span class="tag tag-info">دورك</span> الكمبيوتر خمّن <b>${last.compGuess}</b> — طلع له <b>${last.compBulls}</b> صح في مكانه. اكتب تخمينك!`;
+        }else{
+          gameStatus.innerHTML = `<span class="tag tag-info">جاهز</span> الكمبيوتر هيبدأ بأول تخمين...`;
+        }
+      }else{
+        const who = state.winner;
+        if(who==="you"){
+          gameStatus.innerHTML = `<span class="tag tag-ok">مبروك!</span> كسبت الجولة 👑`;
+        }else if(who==="comp"){
+          gameStatus.innerHTML = `<span class="tag tag-bad">للأسف</span> الكمبيوتر كسب 🤖`;
+        }else{
+          gameStatus.innerHTML = `<span class="tag tag-info">تعادل</span> انت والكمبيوتر وصلتم ٣ في نفس الجولة.`;
+        }
+      }
+
+      // history table
+      historyTbody.innerHTML = "";
+      for(const r of state.history){
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${r.round}</td>
+          <td class="reveal">${r.compGuess}</td>
+          <td>${r.compBulls}</td>
+          <td class="reveal">${r.yourGuess ?? '—'}</td>
+          <td>${r.yourBulls ?? '—'}</td>
+        `;
+        historyTbody.appendChild(tr);
+      }
+
+      // winner banner
+      winnerArea.innerHTML = "";
+      if(state.winner){
+        const div = document.createElement('div');
+        div.className = "winner " + (state.winner==="you" ? "ok" : state.winner==="comp" ? "bad" : "warn");
+        const compLine = `سر الكمبيوتر كان: <b class="reveal">${state.compSecret}</b>`;
+        const youLine  = `سرك كان: <b class="reveal">${state.yourSecret}</b>`;
+        div.innerHTML = (state.winner==="you")
+          ? `🎉 كسبت! ${compLine}`
+          : (state.winner==="comp")
+            ? `🤖 الكمبيوتر كسب! ${youLine}`
+            : `⚖️ تعادل! ${compLine} — ${youLine}`;
+        winnerArea.appendChild(div);
+      }
+    }
+
+    // ===== Game Flow =====
+    function startGame(){
+      const rawSecret = secretEl.value.trim();
+      const allow = !!allowRepeatsEl.checked;
+
+      if(!onlyDigits3(rawSecret)){
+        alert("من فضلك اكتب ٣ أرقام بالضبط لسرك.");
+        secretEl.focus(); return;
+      }
+      if(!allow && !hasUniqueDigits(rawSecret)){
+        alert("حسب الإعداد الحالي: ممنوع تكرار الأرقام في سرك.");
+        secretEl.focus(); return;
+      }
+
+      state.started = true;
+      state.allowRepeats = allow;
+      state.yourSecret = rawSecret;
+      state.compSecret = randomSecret(allow);
+      state.candidates = allCandidates(allow);
+      state.round = 0;
+      state.history = [];
+      state.reveal = false;
+      state.winner = null;
+
+      // أول تخمين للكمبيوتر
+      nextComputerTurn();
+
+      render();
+      guessEl.focus();
+    }
+
+    function nextComputerTurn(){
+      if(state.winner!==null) return;
+
+      // pick first candidate as next guess
+      const compGuess = state.candidates[0];
+      const compBulls = bulls(compGuess, state.yourSecret);
+
+      state.round += 1;
+      state.history.push({ round: state.round, compGuess, compBulls });
+
+      // filter candidates to remain consistent with the feedback we (the honest judge) just produced
+      state.candidates = state.candidates.filter(c => bulls(c, compGuess) === compBulls);
+
+      // if computer has already won right after its guess (3 bulls), we can end immediately,
+      // but we'll still allow the player to play this round to check for draw.
+      checkComputerWinPending();
+    }
+
+    function checkComputerWinPending(){
+      const last = state.history[state.history.length-1];
+      if(last && last.compBulls===3){
+        // mark as "pending": if player also hits 3 this round => draw, otherwise comp wins.
+        last.compPendingWin = true;
+      }
+    }
+
+    function submitYourGuess(){
+      if(state.winner!==null) return;
+
+      const g = guessEl.value.trim();
+      if(!onlyDigits3(g)){ alert("اكتب ٣ أرقام بالضبط لتخمينك."); guessEl.focus(); return; }
+      if(!state.allowRepeats && !hasUniqueDigits(g)){ alert("الإعداد الحالي لا يسمح بتكرار الأرقام في التخمين."); guessEl.focus(); return; }
+
+      const yourB = bulls(g, state.compSecret);
+
+      // fill current round row
+      const current = state.history[state.history.length-1];
+      if(!current){ return; } // safety
+      current.yourGuess = g;
+      current.yourBulls = yourB;
+
+      // check outcomes
+      const youWin = (yourB===3);
+      const compAlready3 = !!current.compPendingWin;
+
+      if(youWin && compAlready3){
+        state.winner = "draw";
+      }else if(youWin){
+        state.winner = "you";
+      }else if(compAlready3){
+        state.winner = "comp";
+      }
+
+      render();
+
+      if(state.winner===null){
+        // start next round: computer guesses again
+        guessEl.value = "";
+        nextComputerTurn();
+        render();
+      }else{
+        // end
+        guessEl.disabled = true;
+        submitGuessBtn.disabled = true;
+      }
+    }
+
+    function newGame(){
+      state.started=false;
+      secretEl.value = "";
+      guessEl.value = "";
+      state.history=[];
+      state.round=0;
+      state.winner=null;
+      render();
+      secretEl.focus();
+    }
+
+    // ===== Events =====
+    startBtn.addEventListener('click', startGame);
+    submitGuessBtn.addEventListener('click', submitYourGuess);
+    newBtn.addEventListener('click', newGame);
+
+    guessEl.addEventListener('keyup', (e)=>{
+      if(e.key==="Enter") submitGuessBtn.click();
+    });
+
+    toggleSecretBtn.addEventListener('click', ()=>{
+      secretEl.type = (secretEl.type === "password" ? "text" : "password");
+    });
+
+    revealBtn.addEventListener('click', ()=>{
+      if(!state.started) return;
+      state.reveal = !state.reveal;
+      render();
+    });
+
+    // init
+    render();
+  </script>
+</body>
+</html>

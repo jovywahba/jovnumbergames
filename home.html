@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Guess — Home</title>
+  <link rel="stylesheet" href="styles.css"/>
+
+  <!-- Live counters & welcome (reads users/{uid}) -->
+  <script type="module" src="home.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Guess — Lobby</h1>
+
+    <!-- Top stats bar (uses #welcomeName, #statGames, #statWins, #statLosses) -->
+    <div class="card" style="margin-bottom:12px">
+      <div class="row" style="gap:10px;flex-wrap:wrap;align-items:center">
+        <div class="pill">Welcome, <b id="welcomeName">Player</b> 👋</div>
+        <div style="flex:1"></div>
+        <div class="pill">Games: <b><span id="statGames">0</span></b></div>
+        <div class="pill">Wins: <b><span id="statWins">0</span></b></div>
+        <div class="pill">Losses: <b><span id="statLosses">0</span></b></div>
+        <button id="logoutBtn" class="ghost">Sign out</button>
+      </div>
+    </div>
+
+    <!-- Create / Join -->
+    <div class="card">
+      <div class="row" style="gap:12px;flex-wrap:wrap">
+        <button id="createBtn" class="ok">Create Room</button>
+        <button id="joinBtn">Join Room</button>
+      </div>
+
+      <div id="joinBox" style="display:none;margin-top:12px">
+        <div class="row" style="gap:10px">
+          <label for="roomId" style="min-width:120px">Room ID</label>
+          <input id="roomId" placeholder="e.g., room-123" style="flex:1"/>
+          <button id="goJoin" class="ok">Go</button>
+        </div>
+        <p class="help">Ask your friend for their room ID and paste it here.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Page wiring (after DOM so IDs exist) -->
+  <script type="module">
+    import { auth, onAuthStateChanged, signOut } from "./firebase.js";
+    const $ = (id)=>document.getElementById(id);
+
+    // Buttons
+    const createBtn = $("createBtn");
+    const joinBtn   = $("joinBtn");
+    const joinBox   = $("joinBox");
+    const goJoin    = $("goJoin");
+    const roomIdInp = $("roomId");
+    const logoutBtn = $("logoutBtn");
+
+    // Auth gate: if signed out, send to login (home.js also redirects before showing stats)
+    onAuthStateChanged(auth, (u)=>{
+      if(!u){
+        location.href = "login.html?next=" + encodeURIComponent(location.href);
+      }
+    });
+
+    // Navigation actions
+    createBtn?.addEventListener("click", ()=> location.href="create.html");
+    joinBtn?.addEventListener("click", ()=>{
+      if(!joinBox) return;
+      const show = joinBox.style.display !== "block";
+      joinBox.style.display = show ? "block" : "none";
+      if(show) roomIdInp?.focus();
+    });
+    goJoin?.addEventListener("click", ()=>{
+      const id = (roomIdInp?.value || "").trim();
+      if(!id){ alert("Enter a room ID"); return; }
+      location.href = `index.html?room=${encodeURIComponent(id)}`;
+    });
+    roomIdInp?.addEventListener("keyup", (e)=>{
+      if(e.key === "Enter") goJoin?.click();
+    });
+
+    // Sign out
+    logoutBtn?.addEventListener("click", async ()=>{
+      try{
+        await signOut(auth);
+      }finally{
+        location.href = "login.html";
+      }
+    });
+  </script>
+</body>
+</html>

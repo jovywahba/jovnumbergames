@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Sign up</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <style>
+    /* Ensure white text everywhere on these pages */
+    body, label, .card, .help, .pill, input, button { color:#fff !important; }
+    a { color: var(--accent2); text-decoration:none; }
+    a:hover { text-decoration: underline; }
+    .auth-wrap { max-width: 520px; margin: 40px auto; }
+    .brand { text-align:center; margin-bottom:14px; }
+    .brand-sub { color: var(--muted); font-size:.95rem; text-align:center; margin-bottom:20px; }
+    .row label { min-width:120px; }
+    .actions { display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+    .eye { cursor:pointer; user-select:none; font-size:.9rem; opacity:.85; }
+    #banner { display:none; margin-bottom:12px; }
+  </style>
+  <script type="module" src="signup.js"></script>
+</head>
+<body>
+  <div class="container auth-wrap">
+    <div class="brand">
+      <h1>Guess — Create account</h1>
+      <div class="brand-sub">Join the game with your email and a username.</div>
+    </div>
+
+    <div id="banner" class="winner"></div>
+
+    <div class="card grid" style="gap:14px">
+      <div class="row">
+        <label for="email">Email</label>
+        <input id="email" type="email" placeholder="you@example.com" autocomplete="email" required style="flex:1"/>
+      </div>
+
+      <div class="row">
+        <label for="username">Username</label>
+        <input id="username" type="text" placeholder="Your name in the game" maxlength="24" autocomplete="nickname" required style="flex:1"/>
+      </div>
+
+      <div class="row">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="At least 6 characters" autocomplete="new-password" required style="flex:1"/>
+        <span id="togglePwd" class="eye">👁</span>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="actions">
+        <button id="signupBtn" class="ok">Create account</button>
+        <div class="help">Already have an account? <a href="login.html">Log in</a></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

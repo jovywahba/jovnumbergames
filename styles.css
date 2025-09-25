@@ -1,0 +1,317 @@
+/* ===== GAME THEME – Delightful Neon (Orange + Pink) ===== */
+:root{
+  --bg0:#0b0610;           /* deep space */
+  --bg1:#12081a;           /* inner gradient */
+  --panel:#160a24cc;       /* glass card */
+  --panel-edge:#2a1a3d;    /* card border */
+  --line:#3a2659;          /* lines */
+  --muted:#b9a9c9;         /* secondary text */
+  --text:#fff0fb;          /* primary text */
+
+  /* accent duo */
+  --accent:#ff7a18;        /* orange */
+  --accent2:#ff4fb7;       /* pink */
+
+  --ok:#34d399;
+  --bad:#f87171;
+  --warn:#facc15;
+
+  --radius-lg:18px;
+  --radius-md:14px;
+  --radius-sm:10px;
+
+  --shadow-1: 0 10px 30px rgba(0,0,0,.45);
+}
+
+body{
+  margin:0; min-height:100dvh; color:var(--text);
+  background:
+    radial-gradient(1200px 800px at 20% -10%, #2b0a44 0%, transparent 60%),
+    radial-gradient(1000px 700px at 110% 20%, #401330 0%, transparent 60%),
+    linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 100%);
+  background-attachment: fixed;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+  letter-spacing:.2px;
+}
+.container{ max-width:1100px; margin-inline:auto; padding:32px 20px 56px; }
+
+h1{
+  margin:0 0 10px; font-size:clamp(26px,3vw,34px); font-weight:900;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  text-shadow: 0 0 18px rgba(255,79,183,.25);
+}
+h2,h3{ color:#fff; }
+
+.card{
+  background: var(--panel);
+  border:1px solid var(--panel-edge);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  padding:16px 16px 18px;
+  backdrop-filter: blur(10px) saturate(120%);
+}
+
+.row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.sep{ height:1px; background:linear-gradient(90deg, transparent, var(--line), transparent); margin:12px 0; }
+.flex-between{ display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; }
+.grid{ display:grid; gap:14px; }
+.grid-two{ grid-template-columns: 1fr; }
+@media (min-width:900px){ .grid-two{ grid-template-columns: 1fr 1fr; } }
+
+.pill{
+  background: linear-gradient(180deg, #1e0e2e, #1a0c27);
+  border:1px solid var(--line);
+  border-radius:999px; padding:.35rem .7rem; font-size:.95rem;
+}
+.pill b{ color:#ffe7fb; }
+
+.status{ margin-top:6px; font-size:0.98rem; color:var(--muted); }
+.tag{
+  display:inline-block; padding:.15rem .5rem; border-radius:999px; font-weight:700;
+  border:1px solid var(--line); background:#1b0f2b; margin-right:.4rem;
+}
+.tag-ok{ border-color: rgba(52,211,153,.4); color:#ddfff3; background:rgba(52,211,153,.12); }
+.tag-bad{ border-color: rgba(248,113,113,.45); color:#ffe0e0; background:rgba(248,113,113,.12); }
+.tag-info{ border-color: rgba(255,124,195,.5); color:#ffe7fb; background:rgba(255,124,195,.12); }
+
+input[type="text"], input[type="number"], input[type="password"], select{
+  appearance:none; background:#1a0c27; border:1px solid var(--line); color:var(--text);
+  padding:.55rem .7rem; border-radius: var(--radius-sm); outline:none;
+  transition: box-shadow .15s ease, border-color .15s ease, transform .05s;
+  font-size:1rem;
+}
+input::placeholder{ color:#a587b7; }
+input:focus, select:focus{
+  border-color: var(--accent2);
+  box-shadow: 0 0 0 3px rgba(255,79,183,.2), 0 0 30px rgba(255,122,24,.12);
+}
+
+button{
+  --btn-glow: 0 0 0 rgba(0,0,0,0);
+  background: linear-gradient(180deg, #44112e, #2b0f2a);
+  border:1px solid #742048; color:#ffe7fb;
+  border-radius: var(--radius-sm); padding:.55rem .9rem; font-weight:800; letter-spacing:.2px;
+  cursor:pointer; transition: transform .06s, box-shadow .2s, background .2s, border-color .2s;
+  box-shadow: var(--btn-glow);
+}
+button:hover{ transform: translateY(-1px); }
+button:active{ transform: translateY(0); }
+button:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+
+button.ok{
+  background: linear-gradient(180deg, #ff7a18, #d85a0a);
+  border-color:#ff9e58;
+  box-shadow: 0 0 22px rgba(255,122,24,.25);
+  color:#12070d;
+}
+button.warn{
+  background: linear-gradient(180deg, #7a4c12, #5f3b0e);
+  border-color:#8a5b19;
+}
+button.ghost{
+  background: linear-gradient(180deg, #211036, #1a0c27);
+  border-color:#3b245c; color:#e9c7ff;
+}
+
+.switch{ display:inline-flex; align-items:center; gap:.6rem; cursor:pointer; }
+.switch input{ display:none; }
+.switch span{ position:relative; padding-left:56px; line-height:28px; }
+.switch span::before, .switch span::after{ content:""; position:absolute; top:50%; transform:translateY(-50%); transition: all .18s ease; }
+.switch span::before{
+  left:0; width:48px; height:28px; border-radius:999px;
+  background:#1a0c27; border:1px solid var(--line);
+}
+.switch span::after{
+  left:2px; width:24px; height:24px; border-radius:50%;
+  background:#2a1242; border:1px solid #4a2a77;
+  box-shadow: 0 2px 6px rgba(0,0,0,.35);
+}
+.switch input:checked + span::before{
+  background:#2c1032; border-color:#ff7a18;
+  box-shadow: 0 0 22px rgba(255,122,24,.25), 0 0 24px rgba(255,79,183,.18) inset;
+}
+.switch input:checked + span::after{ left:22px; background:#421042; border-color:#ff4fb7; }
+
+table{
+  width:100%; border-collapse:separate; border-spacing:0; overflow:hidden;
+  border:1px solid var(--line); border-radius: var(--radius-md);
+  background:#1a0c27;
+}
+thead tr th{
+  text-align:left; font-weight:900; font-size:.95rem; padding:.6rem .7rem;
+  background: linear-gradient(180deg, #2b0a44, #1f0c31);
+  border-bottom:1px solid var(--line);
+}
+tbody tr td{
+  padding:.55rem .7rem; border-bottom:1px solid #2a1344; color:#ffe7fb;
+}
+tbody tr:nth-child(2n) td{ background:#200d35; }
+tbody tr:last-child td{ border-bottom:0; }
+.reveal{
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size:1.05rem; letter-spacing:.6px; color:#ffd7f2;
+}
+
+/* turn highlight */
+@keyframes pulseGlow{
+  0% { box-shadow: 0 0 0 0 rgba(255,79,183,.25), 0 0 20px rgba(255,122,24,.15); }
+  50%{ box-shadow: 0 0 0 6px rgba(255,79,183,.12), 0 0 28px rgba(255,122,24,.22); }
+  100%{ box-shadow: 0 0 0 0 rgba(255,79,183,.25), 0 0 20px rgba(255,122,24,.15); }
+}
+.active-turn{
+  border:1px solid rgba(255,124,195,.7) !important;
+  border-radius: var(--radius-lg) !important;
+  animation: pulseGlow 1.6s ease-in-out infinite;
+}
+
+.help{ color:var(--muted); font-size:.93rem; margin:.2rem 0 0; }
+
+.winner{
+  margin-top:10px; padding:10px 12px; border-radius: var(--radius-md);
+  font-weight:900; border:1px solid var(--line);
+}
+.winner.ok{ color:#f3fff9; background:rgba(52,211,153,.12); border-color: rgba(52,211,153,.45); }
+.winner.bad{ color:#ffe1e1; background:rgba(248,113,113,.12); border-color: rgba(248,113,113,.45); }
+.winner.warn{ color:#fff8d1; background:rgba(250,204,21,.12); border-color: rgba(250,204,21,.45); }
+
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none;
+  background:
+    linear-gradient(transparent 0%, rgba(255,255,255,.02) 100%),
+    repeating-linear-gradient( 0deg, transparent 0 32px, rgba(255,255,255,.02) 32px 33px),
+    repeating-linear-gradient(90deg, transparent 0 32px, rgba(255,255,255,.02) 32px 33px);
+  mix-blend-mode: overlay;
+}
+
+/* === Email field deluxe (Login + Sign Up) ================================== */
+input[type="email"]{
+  position: relative;
+  padding-left: 42px;                      /* room for the icon */
+  background:
+    url("data:image/svg+xml;utf8,\
+      <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffb0df' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><path d='M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z'/><path d='m22 6-10 7L2 6'/></svg>"
+    ) 12px 50% / 20px 20px no-repeat,
+    linear-gradient(180deg, #1c0e2e, #170a26);
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.04),
+    0 0 0 0 rgba(255,79,183,0),
+    0 0 0 0 rgba(255,122,24,0);
+  transition: border-color .18s ease, box-shadow .25s ease, transform .06s ease;
+}
+input[type="email"]::placeholder{ color:#caa7d8; opacity:.85; }
+input[type="email"]:-webkit-autofill{
+  -webkit-text-fill-color: var(--text);
+  -webkit-box-shadow: 0 0 0px 1000px #1a0c27 inset !important;
+  border:1px solid var(--line);
+}
+input[type="email"]:focus{
+  border-color: var(--accent2);
+  box-shadow:
+    0 0 0 3px rgba(255,79,183,.20),
+    0 0 24px rgba(255,122,24,.18),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  transform: translateY(-1px);
+}
+input[type="email"]:not(:placeholder-shown):valid{
+  border-color: rgba(52,211,153,.55);
+  box-shadow: 0 0 0 2px rgba(52,211,153,.18), inset 0 1px 0 rgba(255,255,255,.05);
+}
+input[type="email"]:not(:placeholder-shown):invalid{
+  border-color: rgba(248,113,113,.65);
+  box-shadow: 0 0 0 2px rgba(248,113,113,.20), inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+/* === Password field to match email (lock icon + glow) ====================== */
+input[type="password"]{
+  padding-left: 42px;
+  background:
+    url("data:image/svg+xml;utf8,\
+      <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23ffb0df' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='11' width='18' height='10' rx='2' ry='2'/><path d='M7 11V7a5 5 0 0 1 10 0v4'/></svg>"
+    ) 12px 50% / 20px 20px no-repeat,
+    linear-gradient(180deg, #1c0e2e, #170a26);
+}
+input[type="password"]:focus{
+  border-color: var(--accent2);
+  box-shadow:
+    0 0 0 3px rgba(255,79,183,.20),
+    0 0 24px rgba(255,122,24,.18),
+    inset 0 1px 0 rgba(255,255,255,.05);
+  transform: translateY(-1px);
+}
+
+/* === Form label polish (works across all forms) =========================== */
+.row > label{
+  color:#ffe7fb;
+  font-weight:800;
+  letter-spacing:.2px;
+  opacity:.95;
+}
+
+/* === Step sequence numbers on labels (add class="seq" to <form>) ========== */
+form.seq{ counter-reset: step; }
+form.seq .row > label{
+  position: relative;
+  padding-left: 42px;      /* space for the number badge */
+}
+form.seq .row > label::before{
+  counter-increment: step;
+  content: counter(step);
+  position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 28px; height: 28px; line-height: 28px; text-align: center;
+  font-weight: 900; font-size: .95rem;
+  color: #12070d;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--accent), var(--accent2));
+  box-shadow: 0 2px 10px rgba(255,79,183,.25), 0 0 0 1px rgba(255,255,255,.08) inset;
+}
+form.seq .row:has(input:focus, select:focus) > label::before{
+  box-shadow:
+    0 0 14px rgba(255,79,183,.35),
+    0 0 0 1px rgba(255,255,255,.12) inset;
+}
+
+/* === Subtle input hover & sizing polish =================================== */
+input[type="text"], input[type="number"], input[type="password"], input[type="email"], select{
+  min-height: 42px;
+}
+input:hover, select:hover{
+  border-color:#7a4c9e;
+}
+
+/* === Helper text + chip entrance animation ================================ */
+.form-hint{ color: var(--muted); font-size:.92rem; margin:4px 0 0 0; }
+.winner.ok, .winner.bad{ animation: chipIn .22s ease; }
+@keyframes chipIn{ from{ transform: translateY(6px); opacity:0; } to{ transform: translateY(0); opacity:1; } }
+/* ===== Auth pages polish (force white text on dark) ===== */
+.auth-card, .auth-card * {
+  color: var(--text) !important;          /* force white */
+}
+
+.auth-card label {
+  font-weight: 800;
+  letter-spacing: .2px;
+  opacity: .95;
+}
+
+/* Inputs: already themed, but force white for mobile & autofill */
+.auth-card input[type="email"],
+.auth-card input[type="password"]{
+  color: var(--text) !important;
+}
+.auth-card input::placeholder { color:#e9c7ff; opacity:.75; }
+
+/* iOS/Android autofill keep white text */
+.auth-card input:-webkit-autofill,
+.auth-card input:-webkit-autofill:focus{
+  -webkit-text-fill-color: var(--text) !important;
+  transition: background-color 10000s ease-in-out 0s; /* keep theme */
+}
+
+/* White link in help line */
+.link-white { color: #ffe7fb; text-decoration: underline; }
+.link-white:hover { text-decoration: none; }
+
+/* Auth banner card spacing */
+#authMsg .winner { margin: 0; }
